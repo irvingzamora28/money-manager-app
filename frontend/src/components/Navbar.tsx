@@ -56,9 +56,9 @@ const Navbar = () => {
 								>
 									Login <FaSignInAlt className="ml-2" />
 								</Link>
-								<button className="flex items-center w-1/2 px-3 py-2 mx-1 text-sm font-medium leading-5 text-center text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-600 md:mx-0 md:w-auto">
+								<Link to="/register" className="flex items-center w-1/2 px-3 py-2 mx-1 text-sm font-medium leading-5 text-center text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-600 md:mx-0 md:w-auto">
 									Register <FaUser className="ml-2" />
-								</button>
+								</Link>
 							</div>
 
 							{/* <!-- Search input on mobile screen --> */}
