@@ -11,23 +11,22 @@ const Register = () => {
 	const { name, email, password, password_confirmation } = formData;
 
 	const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData((prevState) => ({
-            ...prevState,
-            [event.target.name]: event.target.value
-        }))
-    };
+		setFormData((prevState) => ({
+			...prevState,
+			[event.target.name]: event.target.value,
+		}));
+	};
 
 	const onSubmit = (event: React.FormEvent<EventTarget>) => {
-        event.preventDefault()
-
-    };
+		event.preventDefault();
+	};
 
 	return (
 		<>
 			<section className="h-screen">
 				<div className="container px-6 py-12 h-full">
-					<div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
-						<div className="md:w-8/12 lg:w-6/12 mb-12 md:mb-0">
+					<div className="flex justify-center items-center flex-wrap g-6 text-gray-800">
+						<div className="md:w-8/12 lg:w-6/12 mb-0 md:mb-12">
 							<img
 								src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
 								className="w-full"
@@ -35,6 +34,11 @@ const Register = () => {
 							/>
 						</div>
 						<div className="md:w-8/12 lg:w-5/12 lg:ml-20">
+							<div className="w-full text-center py-6">
+								<p className="text-2xl tracking-wide text-zinc-700 uppercase">
+									Register
+								</p>
+							</div>
 							<form onSubmit={onSubmit}>
 								<div className="mb-6">
 									<input
