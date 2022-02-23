@@ -1,30 +1,57 @@
 import { NextFunction, Request, Response } from "express";
+import { Expense } from "../models/expenseModel";
 
 const ExpenseController = () => {
-	const index = (req: Request, res: Response, next: NextFunction) => {
-		res.status(200).send({ message: "Get expenses" });
+	const index = async (req: Request, res: Response, next: NextFunction) => {
+		const results = await Expense.find({});
+		res.status(200).send(results);
 	};
 
-	const create = (req: Request, res: Response, next: NextFunction) => {
+	const create = async (req: Request, res: Response, next: NextFunction) => {
 		console.log(req.body);
 		if (!req.body.name) {
 			res.status(400);
 			throw new Error("Please add the name of the expense");
 		}
-
-		// res.status(200).send({ message: "Create expense" });
+		const result = await Expense.create({
+			name: req.body.name,
+			quantity: req.body.quantity,
+			description: req.body.description,
+		});
+		res.status(200).send(result);
 	};
 
-	const get = (req: Request, res: Response, next: NextFunction) => {
-		res.status(200).send({ message: "Get expense" });
+	const get = async (req: Request, res: Response, next: NextFunction) => {
+		const result = await Expense.findById(req.params.id);
+		if (!result) {
+			res.status(400);
+			throw new Error("Expense not found");
+		}
+		res.status(200).send(result);
 	};
 
-	const update = (req: Request, res: Response, next: NextFunction) => {
-		res.status(200).send({ message: "Update expense" });
+	const update = async (req: Request, res: Response, next: NextFunction) => {
+		const result = await Expense.findById(req.params.id);
+		if (!result) {
+			res.status(400);
+			throw new Error("Expense not found");
+		}
+		const updated = await Expense.findByIdAndUpdate(
+			req.params.id,
+			req.body,
+			{ new: true }
+		);
+		res.status(200).send(updated);
 	};
 
-	const destroy = (req: Request, res: Response, next: NextFunction) => {
-		res.status(200).send({ message: "Delete expense" });
+	const destroy = async (req: Request, res: Response, next: NextFunction) => {
+		const result = await Expense.findById(req.params.id);
+		if (!result) {
+			res.status(400);
+			throw new Error("Expense not found");
+		}
+		const deleted = await Expense.findByIdAndDelete(req.params.id)
+		res.status(200).send(deleted);
 	};
 
 	return {
