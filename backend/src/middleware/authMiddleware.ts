@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import UserInterface from "../interfaces/UserInterface";
 import { User } from "../models/userModel";
 
 interface JwtPayload {
@@ -7,7 +8,7 @@ interface JwtPayload {
 }
 
 export interface AuthRequest extends Request {
-    user?: typeof User
+    user: UserInterface | null
 }
 
 const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {

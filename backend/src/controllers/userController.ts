@@ -15,7 +15,16 @@ const UserController = () => {
 	) => {};
 
 	const get = async (req: AuthRequest, res: Response, next: NextFunction) => {
-		res.status(200).send(req.user);
+		try {
+			if (req.user) {
+				res.status(200).send(req.user)
+			} else {
+				res.status(400);
+				throw new Error("User invalid");
+			}
+		} catch (error) {
+			next(error)	
+		}
 	};
 
 	const update = async (
