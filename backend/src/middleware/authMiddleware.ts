@@ -7,7 +7,7 @@ interface JwtPayload {
 }
 
 export interface AuthRequest extends Request {
-	user: typeof User | null;
+    user?: typeof User
 }
 
 const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -23,7 +23,7 @@ const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
 			const decoded = jwt.verify(token, secret) as JwtPayload;
 			// Get user from token
 			const userId = decoded.id ?? "";
-			req.user = await User.findById(userId).select("-password");
+			req.user = await User.findById(userId).select("-password -createdAt -updatedAt");
 			next();
 		} catch (error) {
 			res.status(401);

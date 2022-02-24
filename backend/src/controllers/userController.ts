@@ -1,3 +1,4 @@
+import { AuthRequest } from "./../middleware/authMiddleware";
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -13,8 +14,8 @@ const UserController = () => {
 		next: NextFunction
 	) => {};
 
-	const get = async (req: Request, res: Response, next: NextFunction) => {
-		res.status(200).send("result");
+	const get = async (req: AuthRequest, res: Response, next: NextFunction) => {
+		res.status(200).send(req.user);
 	};
 
 	const update = async (
