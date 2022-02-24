@@ -8,7 +8,7 @@ interface JwtPayload {
 }
 
 export interface AuthRequest extends Request {
-    user: UserInterface | null
+    user?: UserInterface | null
 }
 
 const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
