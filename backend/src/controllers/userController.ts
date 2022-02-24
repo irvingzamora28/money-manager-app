@@ -62,18 +62,46 @@ const UserController = () => {
 					_id: user.id,
 					name: user.name,
 					username: user.username,
+					token: generateToken(user._id),
 				});
 			} else {
-				res.status(400)
-				throw new Error("Invalid user data")
+				res.status(400);
+				throw new Error("Invalid user data");
 			}
-
 		} catch (error) {
 			next(error);
 		}
 	};
 
-	const login = async (req: Request, res: Response, next: NextFunction) => {};
+	const login = async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const { email, password } = req.body;
+			if (!email || !password) {
+				res.status(400);
+				throw new Error("Please add all necessary fields");
+			}
+
+			const user = await User.findOne({ email });
+			if (user && (await bcrypt.compare(password, user.password))) {
+				res.status(201).send({
+					_id: user.id,
+					name: user.name,
+					username: user.username,
+					token: generateToken(user._id),
+				});
+			} else {
+				res.status(400);
+				throw new Error("Invalid user data");
+			}
+		} catch (error) {
+			next(error);
+		}
+	};
+
+	const generateToken = (id: string) => {
+		const secret = process.env.JWT_SECRET ?? "";
+		return jwt.sign({ id }, secret, { expiresIn: "30d" });
+	};
 
 	return {
 		index,
