@@ -1,5 +1,10 @@
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import { TailSpin } from "react-loader-spinner";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { RootState } from "../app/store";
+import {register, reset} from "../features/auth/authSlice"
 const Register = () => {
 	const [formData, setFormData] = useState({
 		name: "",
@@ -9,7 +14,24 @@ const Register = () => {
 	});
 
 	const { name, email, password, password_confirmation } = formData;
+	const navigate = useNavigate()
+	const dispatch = useDispatch()
+	const {user, isLoading, isSuccess, isError, message} = useSelector( (state: RootState) => state.auth )
+	
+	useEffect(() => {
+	  if(isError) {
+		  toast.error(message)
+	  }
+	  
+	  if (isSuccess || user) {
+		  navigate("/")
+	  }
 
+	  dispatch(reset())
+	
+	}, [user, isError, isSuccess, message, navigate, dispatch])
+	
+	
 	const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData((prevState) => ({
 			...prevState,
@@ -19,7 +41,19 @@ const Register = () => {
 
 	const onSubmit = (event: React.FormEvent<EventTarget>) => {
 		event.preventDefault();
+		if (password !== password_confirmation) {
+			toast.error("Passwords do not match")
+		} else {
+			const userData = {
+				name, email, password
+			}
+			dispatch(register(userData))
+		}
 	};
+
+	if (isLoading) {
+		return <TailSpin color="#00BFFF" height={80} width={80} /> 
+	}
 
 	return (
 		<>
@@ -35,9 +69,7 @@ const Register = () => {
 						</div>
 						<div className="md:w-8/12 lg:w-5/12 lg:ml-20">
 							<div className="w-full text-center py-6">
-								<p className="text-2xl tracking-wide text-zinc-700 uppercase">
-									Register
-								</p>
+								<p className="text-2xl tracking-wide text-zinc-700 uppercase">Register</p>
 							</div>
 							<form onSubmit={onSubmit}>
 								<div className="mb-6">
