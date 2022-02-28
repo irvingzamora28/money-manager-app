@@ -27,16 +27,11 @@ const initialState: AuthState = {
 };
 
 // Register user
-// console.log("Here");
-// fetch("https://pokeapi.co/api/v2/pokemon")
-// 	.then((response) => response.json())
-// 	.then((data) => {
-// 		console.log(data);
-// 	});
 const register = createAsyncThunk("auth/register", async (user: UserI, thunkAPI) => {
 	try {
 		return await authService.register(user);
 	} catch (error: any) {
+        // TODO: Catch error message
 		const message =
 			(error.response && error.response.data && error.response.data.message) || error.message || error.toString();
 		console.log("Error register message: ");
@@ -67,6 +62,7 @@ const authSlice = createSlice({
 				state.isSuccess = true;
 				state.user = action.payload;
 			})
+            // TODO: Set correct error message
 			.addCase(register.rejected, (state, action) => {
 				state.isLoading = false;
 				state.isError = true;

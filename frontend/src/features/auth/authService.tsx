@@ -1,26 +1,30 @@
-import axios from "axios";
+import config from "../../config/config";
 
-const API_URL = "http://localhost:5000/api/users/";
+const API_URL = `${config.server.host}:${config.server.port}/api/users/register`;
 
 // Register user
-const register = async (userData:any) => {
-    try {
-        
-        const response = await axios.post(API_URL, {
-            "name": "Irving Zamora",
-            "email": "test1@email.com",
-            "password": "asdasd1"
-        });
-        // const user = await response.json();
-        
-        if (response.data) {
-            localStorage.setItem("user", JSON.stringify(response.data));
-        }
-        
-        return response.data;
-    } catch (error) {
-        return "hello";    
-    }
+const register = async (userData: any) => {
+	try {
+		const response = await fetch(API_URL, {
+			method: "POST",
+			mode: "cors",
+			cache: "no-cache",
+			credentials: "same-origin",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			redirect: "follow",
+			referrerPolicy: "no-referrer",
+			body: JSON.stringify(userData),
+		});
+		const user = await response.json();
+		if (user) {
+		    localStorage.setItem("user", JSON.stringify(user));
+		}
+		return user;
+	} catch (error) {
+		return error;
+	}
 };
 
 const authService = {
