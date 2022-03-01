@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { RootState } from "../app/store";
-import {register, reset} from "../features/auth/authSlice"
+import { register, reset } from "../features/auth/authSlice";
 const Register = () => {
 	const [formData, setFormData] = useState({
 		name: "",
@@ -14,24 +14,22 @@ const Register = () => {
 	});
 
 	const { name, email, password, password_confirmation } = formData;
-	const navigate = useNavigate()
-	const dispatch = useDispatch()
-	const {user, isLoading, isSuccess, isError, message} = useSelector( (state: RootState) => state.auth )
-	
-	useEffect(() => {
-	  if(isError) {
-		  toast.error(message)
-	  }
-	  
-	  if (isSuccess || user) {
-		  navigate("/")
-	  }
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const { user, isLoading, isSuccess, isError, message } = useSelector((state: RootState) => state.auth);
 
-	  dispatch(reset())
-	
-	}, [user, isError, isSuccess, message, navigate, dispatch])
-	
-	
+	useEffect(() => {
+		if (isError) {
+			toast.error(message);
+		}
+
+		if (isSuccess || user) {
+			navigate("/");
+		}
+
+		dispatch(reset());
+	}, [user, isError, isSuccess, message, navigate, dispatch]);
+
 	const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData((prevState) => ({
 			...prevState,
@@ -42,17 +40,27 @@ const Register = () => {
 	const onSubmit = (event: React.FormEvent<EventTarget>) => {
 		event.preventDefault();
 		if (password !== password_confirmation) {
-			toast.error("Passwords do not match")
+			toast.error("Passwords do not match");
 		} else {
 			const userData = {
-				name, email, password
-			}
-			dispatch(register(userData))
+				name,
+				email,
+				password,
+			};
+			dispatch(register(userData));
 		}
 	};
 
-	if (isLoading) {
-		return <TailSpin color="#00BFFF" height={80} width={80} /> 
+	if (true) {
+		return (
+			<>
+				<section className="h-screen">
+					<div className="flex justify-center items-center align-middle h-3/4">
+						<TailSpin color="#00BFFF" height={80} width={80} />
+					</div>
+				</section>
+			</>
+		);
 	}
 
 	return (
