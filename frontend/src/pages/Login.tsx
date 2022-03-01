@@ -1,12 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "../app/store";
+import { login, reset } from "../features/auth/authSlice";
+import { TailSpin } from "react-loader-spinner";
 
 const Login = () => {
+	const navivate = useNavigate();
+	const dispatch = useDispatch();
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
+		remember: false,
 	});
 
-	const { email, password } = formData;
+	const { email, password, remember } = formData;
+
+	const { user, isLoading, isError, isSuccess, message } = useSelector((state: RootState) => state.auth);
+
+	useEffect(() => {
+		if (isError) {
+			toast.error(message);
+		}
+		if (isSuccess || user) {
+			navivate("/");
+			toast.success(message);
+		}
+		dispatch(reset());
+	}, [user, isError, isSuccess, message, navivate, dispatch]);
 
 	const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData((prevState) => ({
@@ -15,11 +37,30 @@ const Login = () => {
 		}));
 	};
 
-	const onChangeRemember = () => {};
+	const onChangeRemember = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setFormData((prevState) => ({
+			...prevState,
+			[event.target.name]: event.target.checked,
+		}));
+	};
 
 	const onSubmit = (event: React.FormEvent<EventTarget>) => {
 		event.preventDefault();
+		const userData = { email, password };
+		dispatch(login(userData));
 	};
+
+	if (isLoading) {
+		return (
+			<>
+				<section className="h-screen">
+					<div className="flex justify-center items-center align-middle h-3/4">
+						<TailSpin color="#00BFFF" height={80} width={80} />
+					</div>
+				</section>
+			</>
+		);
+	}
 
 	return (
 		<>
@@ -34,9 +75,7 @@ const Login = () => {
 							/>
 						</div>
 						<div className="w-full text-center py-6">
-							<p className="text-2xl tracking-wide text-zinc-700 uppercase">
-								Sign in
-							</p>
+							<p className="text-2xl tracking-wide text-zinc-700 uppercase">Sign in</p>
 						</div>
 						<div className="md:w-8/12 lg:w-5/12">
 							<form onSubmit={onSubmit}>
@@ -72,7 +111,7 @@ const Login = () => {
 											name="remember"
 											onChange={onChangeRemember}
 											className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
-											checked
+											checked={remember}
 										/>
 										<label
 											className="form-check-label inline-block text-gray-800"
@@ -99,9 +138,7 @@ const Login = () => {
 								</button>
 
 								<div className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5">
-									<p className="text-center font-semibold mx-4 mb-0">
-										OR
-									</p>
+									<p className="text-center font-semibold mx-4 mb-0">OR</p>
 								</div>
 							</form>
 						</div>

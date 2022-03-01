@@ -26,6 +26,17 @@ const register = createAsyncThunk("auth/register", async (user: UserInterface, t
 	}
 });
 
+const login = createAsyncThunk("auth/login", async (user: UserInterface, thunkAPI) => {
+	try {
+		const result = await authService.login(user);
+		return result;
+	} catch (error: any) {
+		const message =
+			(error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+		return thunkAPI.rejectWithValue(message);
+	}
+});
+
 const logout = createAsyncThunk("auth/logout", async () => {
 	await authService.logout();
 });
@@ -62,6 +73,24 @@ const authSlice = createSlice({
 				if (action.payload) {
 					state.message = action.payload;
 				}
+			})
+			.addCase(login.pending, (state: AuthStateInterface) => {
+				state.isLoading = true;
+			})
+			.addCase(login.fulfilled, (state: AuthStateInterface, action: PayloadAction<UserInterface>) => {
+				state.isLoading = false;
+				state.isSuccess = true;
+				state.user = action.payload;
+                state.message = "Logged in successfully"
+			})
+			// TODO: Set correct error type message
+			.addCase(login.rejected, (state, action: PayloadAction<any>) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.user = null;
+				if (action.payload) {
+					state.message = action.payload;
+				}
 			});
 	},
 });
@@ -69,5 +98,5 @@ const authSlice = createSlice({
 // const reset = authSlice.actions;
 export const { reset } = authSlice.actions;
 
-export { authSlice, register, logout };
+export { authSlice, register, login, logout };
 export default authSlice.reducer;
