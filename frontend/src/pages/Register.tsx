@@ -51,7 +51,7 @@ const Register = () => {
 		}
 	};
 
-	if (true) {
+	if (isLoading) {
 		return (
 			<>
 				<section className="h-screen">

@@ -42,10 +42,10 @@ const authSlice = createSlice({
 			.addCase(register.pending, (state: AuthStateInterface) => {
 				state.isLoading = true;
 			})
-			.addCase(register.fulfilled, (state: AuthStateInterface, action: PayloadAction<AuthStateInterface>) => {
+			.addCase(register.fulfilled, (state: AuthStateInterface, action: PayloadAction<UserInterface>) => {
 				state.isLoading = false;
 				state.isSuccess = true;
-				state.user = action.payload.user;
+				state.user = action.payload;
 			})
 			// TODO: Set correct error type message
 			.addCase(register.rejected, (state, action: PayloadAction<any>) => {
