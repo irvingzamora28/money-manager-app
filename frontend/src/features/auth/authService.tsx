@@ -22,8 +22,9 @@ const register = async (userData: any) => {
 		    localStorage.setItem("user", JSON.stringify(user));
 		}
 		return user;
-	} catch (error) {
-		return error;
+	} catch (error: any) {
+		throw new Error("There was an error making the register request");
+        
 	}
 };
 

@@ -1,24 +1,12 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import AuthStateInterface from "../../interfaces/AuthStateInterface";
+import UserInterface from "../../interfaces/UserInterface";
 import authService from "./authService";
 
 // Get user from localStorage
 const user = JSON.parse(localStorage.getItem("user") || '""');
 
-interface AuthState {
-	user: any;
-	isError: boolean;
-	isSuccess: boolean;
-	isLoading: boolean;
-	message: string;
-}
-
-interface UserI {
-	name: string;
-	email: string;
-	password: string;
-}
-
-const initialState: AuthState = {
+const initialState: AuthStateInterface = {
 	user: null,
 	isError: false,
 	isSuccess: false,
@@ -27,16 +15,13 @@ const initialState: AuthState = {
 };
 
 // Register user
-const register = createAsyncThunk("auth/register", async (user: UserI, thunkAPI) => {
+const register = createAsyncThunk("auth/register", async (user: UserInterface, thunkAPI) => {
 	try {
-		return await authService.register(user);
+		const result = await authService.register(user);
+		return result;
 	} catch (error: any) {
-        // TODO: Catch error message
 		const message =
 			(error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-		console.log("Error register message: ");
-		console.log(message);
-
 		return thunkAPI.rejectWithValue(message);
 	}
 });
@@ -54,20 +39,22 @@ const authSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(register.pending, (state) => {
+			.addCase(register.pending, (state: AuthStateInterface) => {
 				state.isLoading = true;
 			})
-			.addCase(register.fulfilled, (state, action) => {
+			.addCase(register.fulfilled, (state: AuthStateInterface, action: PayloadAction<AuthStateInterface>) => {
 				state.isLoading = false;
 				state.isSuccess = true;
-				state.user = action.payload;
+				state.user = action.payload.user;
 			})
-            // TODO: Set correct error message
-			.addCase(register.rejected, (state, action) => {
+			// TODO: Set correct error type message
+			.addCase(register.rejected, (state, action: PayloadAction<any>) => {
 				state.isLoading = false;
 				state.isError = true;
 				state.user = null;
-				state.message = "action.payload";
+				if (action.payload) {
+					state.message = action.payload;
+				}
 			});
 	},
 });
