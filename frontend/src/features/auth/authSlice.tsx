@@ -7,7 +7,7 @@ import authService from "./authService";
 const user = JSON.parse(localStorage.getItem("user") || '""');
 
 const initialState: AuthStateInterface = {
-	user: null,
+	user: user ? user : null,
 	isError: false,
 	isSuccess: false,
 	isLoading: false,
@@ -26,6 +26,10 @@ const register = createAsyncThunk("auth/register", async (user: UserInterface, t
 	}
 });
 
+const logout = createAsyncThunk("auth/logout", async () => {
+	await authService.logout();
+});
+
 const authSlice = createSlice({
 	name: "auth",
 	initialState,
@@ -39,6 +43,9 @@ const authSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
+			.addCase(logout.fulfilled, (state: AuthStateInterface) => {
+				state.user = null;
+			})
 			.addCase(register.pending, (state: AuthStateInterface) => {
 				state.isLoading = true;
 			})
@@ -62,5 +69,5 @@ const authSlice = createSlice({
 // const reset = authSlice.actions;
 export const { reset } = authSlice.actions;
 
-export { authSlice, register };
+export { authSlice, register, logout };
 export default authSlice.reducer;
