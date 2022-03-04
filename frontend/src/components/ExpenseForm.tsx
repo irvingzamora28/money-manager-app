@@ -1,6 +1,9 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { createExpense } from "../features/expenses/expenseSlice";
+import React, { useEffect, useState } from "react";
+import { TailSpin } from "react-loader-spinner";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { RootState } from "../app/store";
+import { createExpense, reset } from "../features/expenses/expenseSlice";
 
 const ExpenseForm = () => {
 	const dispatch = useDispatch();
@@ -12,6 +15,19 @@ const ExpenseForm = () => {
 	});
 
 	const { name, quantity, description } = expenseData;
+
+	const { expenses, isLoading, isError, isSuccess, message } = useSelector((state: RootState) => state.expenses);
+
+	useEffect(() => {
+		if (isError) {
+			toast.error(message);
+		}
+		if (isSuccess) {
+			toast.success(message);
+			setExpenseData({name: "", quantity: "", description: ""})
+		}
+		dispatch(reset());
+	}, [expenses, isError, isSuccess, message, dispatch]);
 
 	const onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		setExpenseData((prevState) => ({
@@ -25,6 +41,20 @@ const ExpenseForm = () => {
 		dispatch(createExpense(expenseData))
 
 	};
+
+	// TODO: Extract into component
+	if (isLoading) {
+		return (
+			<>
+				<section className="h-screen">
+					<div className="flex justify-center items-center align-middle h-3/4">
+						<TailSpin color="#00BFFF" height={80} width={80} />
+					</div>
+				</section>
+			</>
+		);
+	}
+
 	return (
 		<>
 			<div className="justify-center items-center align-middle h-3/4">
