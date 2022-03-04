@@ -1,8 +1,9 @@
 import config from "../../config/config";
+import ExpenseInterface from "../../interfaces/ExpenseInterface";
 
 const API_URL = `${config.server.host}:${config.server.port}/api/expenses`;
 
-const createExpense = async (expenseData: any, token: string) => {
+const createExpense = async (expenseData: any, token: string): Promise<ExpenseInterface> => {
 	try {
 		// const options = {
 		// 	headers: {
@@ -23,12 +24,16 @@ const createExpense = async (expenseData: any, token: string) => {
             body: JSON.stringify(expenseData),
         });
 
-        // TODO: Verify expense is OK
+        // TODO: Format error
         const expense = await response.json();
+        if (expense.name) {
+            return expense;
+        } else {
+    		throw new Error(expense.message);
+        }
 		
-		return expense;
 	} catch (error: any) {
-		throw new Error("There was an error creating the expense");
+		throw new Error(`There was an error creating the expense: ${error.message}`);
 	}
 };
 

@@ -16,18 +16,18 @@ const ExpenseForm = () => {
 
 	const { name, quantity, description } = expenseData;
 
-	const { expenses, isLoading, isError, isSuccess, message } = useSelector((state: RootState) => state.expenses);
+	const { expenses, isLoading, isError, isSuccess, error, success } = useSelector((state: RootState) => state.expenses);
 
 	useEffect(() => {
-		if (isError) {
-			toast.error(message);
+		if (isError && error) {
+			toast.error(error.message);
 		}
-		if (isSuccess) {
-			toast.success(message);
+		if (isSuccess && success) {
+			toast.success(success.message);
 			setExpenseData({name: "", quantity: "", description: ""})
 		}
 		dispatch(reset());
-	}, [expenses, isError, isSuccess, message, dispatch]);
+	}, [expenses, isError, isSuccess, error, success, dispatch]);
 
 	const onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		setExpenseData((prevState) => ({
