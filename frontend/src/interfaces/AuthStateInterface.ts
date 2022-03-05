@@ -1,3 +1,5 @@
+import { SuccessResponseInterface } from './SuccessResponseInterface';
+import { ErrorResponseInterface } from './ErrorResponseInterface';
 import UserInterface from "./UserInterface";
 
 export default interface AuthStateInterface {
@@ -5,5 +7,6 @@ export default interface AuthStateInterface {
 	isError: boolean;
 	isSuccess: boolean;
 	isLoading: boolean;
-	message: string;
+	error: ErrorResponseInterface;
+    success: SuccessResponseInterface;
 }

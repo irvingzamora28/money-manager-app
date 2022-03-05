@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice, Dispatch, Middleware, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import AuthStateInterface from "../../interfaces/AuthStateInterface";
 import { ErrorResponseInterface } from "../../interfaces/ErrorResponseInterface";
 import ExpenseInterface from "../../interfaces/ExpenseInterface";
 import ExpenseStateInterface from "../../interfaces/ExpenseStateInterface";

@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
 import AuthStateInterface from "../../interfaces/AuthStateInterface";
+import { ErrorResponseInterface } from "../../interfaces/ErrorResponseInterface";
 import UserInterface from "../../interfaces/UserInterface";
 import authService from "./authService";
 
@@ -11,11 +13,15 @@ const initialState: AuthStateInterface = {
 	isError: false,
 	isSuccess: false,
 	isLoading: false,
-	message: "",
+	error: { message: "" },
+	success: { message: "" },
 };
 
-// Register user
-const register = createAsyncThunk("auth/register", async (user: UserInterface, thunkAPI) => {
+const register = createAsyncThunk<
+	UserInterface,
+	UserInterface,
+	{ state: RootState; rejectValue: ErrorResponseInterface }
+>("auth/register", async (user: UserInterface, thunkAPI) => {
 	try {
 		const result = await authService.register(user);
 		return result;
@@ -26,7 +32,11 @@ const register = createAsyncThunk("auth/register", async (user: UserInterface, t
 	}
 });
 
-const login = createAsyncThunk("auth/login", async (user: UserInterface, thunkAPI) => {
+const login = createAsyncThunk<
+UserInterface,
+UserInterface,
+{ state: RootState; rejectValue: ErrorResponseInterface }
+>("auth/login", async (user: UserInterface, thunkAPI) => {
 	try {
 		const result = await authService.login(user);
 		return result;
@@ -49,7 +59,8 @@ const authSlice = createSlice({
 			state.isLoading = false;
 			state.isError = false;
 			state.isSuccess = false;
-			state.message = "";
+			state.error = { message: "" };
+			state.success = { message: "" };
 		},
 	},
 	extraReducers: (builder) => {
@@ -65,13 +76,12 @@ const authSlice = createSlice({
 				state.isSuccess = true;
 				state.user = action.payload;
 			})
-			// TODO: Set correct error type message
-			.addCase(register.rejected, (state, action: PayloadAction<any>) => {
+			.addCase(register.rejected, (state, action: PayloadAction<ErrorResponseInterface | undefined>) => {
 				state.isLoading = false;
 				state.isError = true;
 				state.user = null;
 				if (action.payload) {
-					state.message = action.payload;
+					state.error.message = action.payload.message;
 				}
 			})
 			.addCase(login.pending, (state: AuthStateInterface) => {
@@ -81,21 +91,19 @@ const authSlice = createSlice({
 				state.isLoading = false;
 				state.isSuccess = true;
 				state.user = action.payload;
-                state.message = "Logged in successfully"
+				state.success.message = "Logged in successfully";
 			})
-			// TODO: Set correct error type message
-			.addCase(login.rejected, (state, action: PayloadAction<any>) => {
+			.addCase(login.rejected, (state, action: PayloadAction<ErrorResponseInterface | undefined>) => {
 				state.isLoading = false;
 				state.isError = true;
 				state.user = null;
 				if (action.payload) {
-					state.message = action.payload;
+					state.error.message = action.payload.message;
 				}
 			});
 	},
 });
 
-// const reset = authSlice.actions;
 export const { reset } = authSlice.actions;
 
 export { authSlice, register, login, logout };
