@@ -16,11 +16,11 @@ const Register = () => {
 	const { name, email, password, password_confirmation } = formData;
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const { user, isLoading, isSuccess, isError, message } = useSelector((state: RootState) => state.auth);
+	const { user, isLoading, isSuccess, isError, error, success } = useSelector((state: RootState) => state.auth);
 
 	useEffect(() => {
 		if (isError) {
-			toast.error(message);
+			toast.error(error.message);
 		}
 
 		if (isSuccess || user) {
@@ -28,7 +28,7 @@ const Register = () => {
 		}
 
 		dispatch(reset());
-	}, [user, isError, isSuccess, message, navigate, dispatch]);
+	}, [user, isError, isSuccess, error, success, navigate, dispatch]);
 
 	const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData((prevState) => ({

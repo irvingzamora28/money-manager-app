@@ -17,18 +17,18 @@ const Login = () => {
 
 	const { email, password, remember } = formData;
 
-	const { user, isLoading, isError, isSuccess, message } = useSelector((state: RootState) => state.auth);
+	const { user, isLoading, isError, isSuccess, error, success } = useSelector((state: RootState) => state.auth);
 
 	useEffect(() => {
 		if (isError) {
-			toast.error(message);
+			toast.error(error.message);
 		}
 		if (isSuccess || user) {
 			navivate("/");
-			toast.success(message);
+			toast.success(success.message);
 		}
 		dispatch(reset());
-	}, [user, isError, isSuccess, message, navivate, dispatch]);
+	}, [user, isError, isSuccess, error, success, navivate, dispatch]);
 
 	const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData((prevState) => ({
