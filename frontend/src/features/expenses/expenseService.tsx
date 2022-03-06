@@ -46,7 +46,7 @@ const getExpenses = async (token: string): Promise<ExpenseInterface[]> => {
 		});
 
 		const expenses = await response.json();
-        
+
 		if (expenses) {
 			return expenses;
 		} else {
@@ -57,9 +57,37 @@ const getExpenses = async (token: string): Promise<ExpenseInterface[]> => {
 	}
 };
 
+const deleteExpense = async (id: string, token: string): Promise<ExpenseInterface> => {
+	try {
+		const response = await fetch(`${API_URL}/${id}`, {
+			method: "DELETE",
+			mode: "cors",
+			cache: "no-cache",
+			credentials: "same-origin",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			redirect: "follow",
+			referrerPolicy: "no-referrer",
+		});
+
+		const expense = await response.json();
+
+		if (expense) {
+			return expense;
+		} else {
+			throw new Error(expense.message);
+		}
+	} catch (error: any) {
+		throw new Error(`There was an error deleting the expense: ${error.message}`);
+	}
+};
+
 const expenseService = {
 	createExpense,
 	getExpenses,
+	deleteExpense,
 };
 
 export default expenseService;

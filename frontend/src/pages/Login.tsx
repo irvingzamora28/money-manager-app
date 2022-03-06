@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../app/store";
-import { login, reset } from "../features/auth/authSlice";
+import { login } from "../features/auth/authSlice";
 import { TailSpin } from "react-loader-spinner";
 
 const Login = () => {

@@ -1,4 +1,7 @@
 import { FC } from "react";
+import { FaTrash } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { deleteExpense } from "../features/expenses/expenseSlice";
 import ExpenseInterface from "../interfaces/ExpenseInterface";
 
 interface ExpenseItemProps {
@@ -6,6 +9,11 @@ interface ExpenseItemProps {
 }
 
 const ExpenseItem: FC<ExpenseItemProps> = ({ expense }) => {
+	const dispatch = useDispatch();
+
+	const onDelete = () => {
+		dispatch(deleteExpense(expense._id ?? ""));
+	};
 	return (
 		<>
 			<div className="flex rounded-lg h-full bg-gray-100 p-2 m-2 flex-col">
@@ -27,9 +35,7 @@ const ExpenseItem: FC<ExpenseItemProps> = ({ expense }) => {
 					<p className="text-red-600 text-md ml-auto">${parseFloat(expense.quantity).toFixed(2)}</p>
 				</div>
 				<div className="flex-grow">
-					<p className="text-md my-1">
-						{expense.description}
-					</p>
+					<p className="text-md my-1">{expense.description}</p>
 					<div className="flex flex-wrap">
 						<span className="text-xs mr-2 mb-2 inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-blue-600 text-white rounded-full">
 							Primary
@@ -43,7 +49,15 @@ const ExpenseItem: FC<ExpenseItemProps> = ({ expense }) => {
 						>
 							View more
 						</button> */}
-						<p className="inline-block ml-auto">{new Date(expense.createdAt?? "").toLocaleDateString("en-US")}</p>
+						<p className="flex self-center mr-auto">
+							{new Date(expense.createdAt ?? "").toLocaleDateString("en-US")}
+						</p>
+						<button
+							onClick={onDelete}
+							className="inline-block ml-2 px-2 py-2 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"
+						>
+							<FaTrash />
+						</button>
 					</div>
 				</div>
 			</div>

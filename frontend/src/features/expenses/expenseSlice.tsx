@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, Dispatch, Middleware, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { ErrorResponseInterface } from "../../interfaces/ErrorResponseInterface";
 import ExpenseInterface from "../../interfaces/ExpenseInterface";
@@ -45,6 +45,25 @@ const getExpenses = createAsyncThunk<
 		const token = thunkAPI.getState().auth.user?.token ?? "";
 
 		const result = await expenseService.getExpenses(token);
+		return result;
+	} catch (error: any) {
+		const message =
+			(error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+		return thunkAPI.rejectWithValue({ message: message } as ErrorResponseInterface);
+	}
+});
+
+const deleteExpense = createAsyncThunk<
+	ExpenseInterface,
+	string,
+	{
+		state: RootState;
+		rejectValue: ErrorResponseInterface;
+	}
+>("expenses/delete", async (id: string, thunkAPI) => {
+	try {
+		const token = thunkAPI.getState().auth.user?.token ?? "";
+		const result = await expenseService.deleteExpense(id, token);
 		return result;
 	} catch (error: any) {
 		const message =
@@ -107,10 +126,36 @@ const expenseSlice = createSlice({
 						state.error.message = action.payload.message;
 					}
 				}
+			)
+			.addCase(deleteExpense.pending, (state: ExpenseStateInterface) => {
+				state.isLoading = true;
+			})
+			.addCase(
+				deleteExpense.fulfilled,
+				(state: ExpenseStateInterface, action: PayloadAction<ExpenseInterface>) => {
+					state.isLoading = false;
+					state.isSuccess = true;
+					state.success.message = "Expense deleted successfully";
+					if (state.expenses) {
+						state.expenses = state.expenses.filter((expense) => expense._id !== action.payload._id);
+					}
+				}
+			)
+			.addCase(
+				deleteExpense.rejected,
+				(state: ExpenseStateInterface, action: PayloadAction<ErrorResponseInterface | undefined>) => {
+					state.isLoading = false;
+					state.isError = true;
+					state.expenses = null;
+					if (action.payload) {
+						state.error.type = "get_expenses";
+						state.error.message = action.payload.message;
+					}
+				}
 			);
 	},
 });
 
 export const { reset } = expenseSlice.actions;
-export { createExpense, getExpenses };
+export { createExpense, getExpenses, deleteExpense };
 export default expenseSlice.reducer;
