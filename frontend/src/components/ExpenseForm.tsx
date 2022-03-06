@@ -3,7 +3,7 @@ import { TailSpin } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { RootState } from "../app/store";
-import { createExpense, reset } from "../features/expenses/expenseSlice";
+import { createExpense } from "../features/expenses/expenseSlice";
 
 const ExpenseForm = () => {
 	const dispatch = useDispatch();
@@ -26,7 +26,6 @@ const ExpenseForm = () => {
 			toast.success(success.message);
 			setExpenseData({name: "", quantity: "", description: ""})
 		}
-		dispatch(reset());
 	}, [expenses, isError, isSuccess, error, success, dispatch]);
 
 	const onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

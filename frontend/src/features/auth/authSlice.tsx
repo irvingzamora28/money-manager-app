@@ -13,8 +13,8 @@ const initialState: AuthStateInterface = {
 	isError: false,
 	isSuccess: false,
 	isLoading: false,
-	error: { message: "" },
-	success: { message: "" },
+	error: { type: "", message: "" },
+	success: { type: "", message: "" },
 };
 
 const register = createAsyncThunk<
@@ -28,24 +28,25 @@ const register = createAsyncThunk<
 	} catch (error: any) {
 		const message =
 			(error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-		return thunkAPI.rejectWithValue(message);
+		return thunkAPI.rejectWithValue({ message: message } as ErrorResponseInterface);
 	}
 });
 
-const login = createAsyncThunk<
-UserInterface,
-UserInterface,
-{ state: RootState; rejectValue: ErrorResponseInterface }
->("auth/login", async (user: UserInterface, thunkAPI) => {
-	try {
-		const result = await authService.login(user);
-		return result;
-	} catch (error: any) {
-		const message =
-			(error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-		return thunkAPI.rejectWithValue(message);
+const login = createAsyncThunk<UserInterface, UserInterface, { state: RootState; rejectValue: ErrorResponseInterface }>(
+	"auth/login",
+	async (user: UserInterface, thunkAPI) => {
+		try {
+			const result = await authService.login(user);
+			return result;
+		} catch (error: any) {
+			const message =
+				(error.response && error.response.data && error.response.data.message) ||
+				error.message ||
+				error.toString();
+			return thunkAPI.rejectWithValue({ message: message } as ErrorResponseInterface);
+		}
 	}
-});
+);
 
 const logout = createAsyncThunk("auth/logout", async () => {
 	await authService.logout();
@@ -59,8 +60,8 @@ const authSlice = createSlice({
 			state.isLoading = false;
 			state.isError = false;
 			state.isSuccess = false;
-			state.error = { message: "" };
-			state.success = { message: "" };
+			state.error = { type: "", message: "" };
+			state.success = { type: "", message: "" };
 		},
 	},
 	extraReducers: (builder) => {
@@ -74,6 +75,7 @@ const authSlice = createSlice({
 			.addCase(register.fulfilled, (state: AuthStateInterface, action: PayloadAction<UserInterface>) => {
 				state.isLoading = false;
 				state.isSuccess = true;
+				state.isError = false;
 				state.user = action.payload;
 			})
 			.addCase(register.rejected, (state, action: PayloadAction<ErrorResponseInterface | undefined>) => {
@@ -90,6 +92,7 @@ const authSlice = createSlice({
 			.addCase(login.fulfilled, (state: AuthStateInterface, action: PayloadAction<UserInterface>) => {
 				state.isLoading = false;
 				state.isSuccess = true;
+				state.isError = false;
 				state.user = action.payload;
 				state.success.message = "Logged in successfully";
 			})

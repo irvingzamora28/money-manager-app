@@ -10,17 +10,14 @@ const initialState: ExpenseStateInterface = {
 	isError: false,
 	isSuccess: false,
 	isLoading: false,
-	error: { message: "" },
-	success: { message: "" },
+	error: { type: "", message: "" },
+	success: { type: "", message: "" },
 };
 
 const createExpense = createAsyncThunk<
-	// Return type of the payload creator
 	ExpenseInterface,
-	// First argument to the payload creator
 	ExpenseInterface,
 	{
-		// Optional fields for defining thunkApi field types
 		state: RootState;
 		rejectValue: ErrorResponseInterface;
 	}
@@ -33,6 +30,26 @@ const createExpense = createAsyncThunk<
 		const message =
 			(error.response && error.response.data && error.response.data.message) || error.message || error.toString();
 		return rejectWithValue({ message: message } as ErrorResponseInterface);
+	}
+});
+
+const getExpenses = createAsyncThunk<
+	ExpenseInterface[],
+	null,
+	{
+		state: RootState;
+		rejectValue: ErrorResponseInterface;
+	}
+>("expenses/all", async (_, thunkAPI) => {
+	try {
+		const token = thunkAPI.getState().auth.user?.token ?? "";
+
+		const result = await expenseService.getExpenses(token);
+		return result;
+	} catch (error: any) {
+		const message =
+			(error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+		return thunkAPI.rejectWithValue({ message: message } as ErrorResponseInterface);
 	}
 });
 
@@ -53,6 +70,7 @@ const expenseSlice = createSlice({
 					state.isLoading = false;
 					state.expenses?.push(action.payload);
 					state.isSuccess = true;
+					state.success.type = "create_expense";
 					state.success.message = "Expense created successfully";
 				}
 			)
@@ -63,6 +81,29 @@ const expenseSlice = createSlice({
 					state.isError = true;
 					state.expenses = null;
 					if (action.payload) {
+						state.error.type = "create_expense";
+						state.error.message = action.payload.message;
+					}
+				}
+			)
+			.addCase(getExpenses.pending, (state: ExpenseStateInterface) => {
+				state.isLoading = true;
+			})
+			.addCase(
+				getExpenses.fulfilled,
+				(state: ExpenseStateInterface, action: PayloadAction<ExpenseInterface[]>) => {
+					state.isLoading = false;
+					state.expenses = action.payload;
+				}
+			)
+			.addCase(
+				getExpenses.rejected,
+				(state: ExpenseStateInterface, action: PayloadAction<ErrorResponseInterface | undefined>) => {
+					state.isLoading = false;
+					state.isError = true;
+					state.expenses = null;
+					if (action.payload) {
+						state.error.type = "get_expenses";
 						state.error.message = action.payload.message;
 					}
 				}
@@ -71,5 +112,5 @@ const expenseSlice = createSlice({
 });
 
 export const { reset } = expenseSlice.actions;
-export { createExpense };
+export { createExpense, getExpenses };
 export default expenseSlice.reducer;

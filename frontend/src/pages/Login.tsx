@@ -7,7 +7,7 @@ import { login, reset } from "../features/auth/authSlice";
 import { TailSpin } from "react-loader-spinner";
 
 const Login = () => {
-	const navivate = useNavigate();
+	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const [formData, setFormData] = useState({
 		email: "",
@@ -23,12 +23,17 @@ const Login = () => {
 		if (isError) {
 			toast.error(error.message);
 		}
-		if (isSuccess || user) {
-			navivate("/");
+
+		if (user) {
+			navigate("/");
+		}
+
+		if (isSuccess) {
+			navigate("/");
 			toast.success(success.message);
 		}
-		dispatch(reset());
-	}, [user, isError, isSuccess, error, success, navivate, dispatch]);
+		
+	}, [user, isError, isSuccess, error, success, navigate, dispatch]);
 
 	const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData((prevState) => ({

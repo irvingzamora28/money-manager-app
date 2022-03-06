@@ -27,8 +27,10 @@ const register = async (userData: any) => {
 };
 
 const login = async (userData: any) => {
+	let response;
+	let userResponse;
 	try {
-		const response = await fetch(`${API_URL}/login`, {
+		response = await fetch(`${API_URL}/login`, {
 			method: "POST",
 			mode: "cors",
 			cache: "no-cache",
@@ -40,14 +42,19 @@ const login = async (userData: any) => {
 			referrerPolicy: "no-referrer",
 			body: JSON.stringify(userData),
 		});
-		const user = await response.json();
-		if (user) {
-			localStorage.setItem("user", JSON.stringify(user));
-		}
-		return user;
+		userResponse = await response.json();
 	} catch (error: any) {
 		throw new Error("There was an error making the register request");
 	}
+	if (response.status !== 201) {
+		
+		throw new Error(userResponse.message);
+	}
+
+	if (userResponse) {
+		localStorage.setItem("user", JSON.stringify(userResponse));
+	}
+	return userResponse;
 };
 
 const logout = () => {
