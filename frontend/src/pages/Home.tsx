@@ -19,10 +19,10 @@ const Home = () => {
 			navigate("/login");
 		}
 
-		dispatch(getExpenses(null))
+		dispatch(getExpenses(null));
 		return () => {
-			dispatch(reset())
-		}
+			dispatch(reset());
+		};
 	}, [user, dispatch, navigate]);
 
 	// TODO: Extract into component
@@ -43,14 +43,29 @@ const Home = () => {
 			<section className="text-gray-600 body-font">
 				<div className="container px-5 md:py-8 p-2 mx-auto">
 					<div className="flex flex-col-reverse md:flex-row">
-						<div className="lg:w-3/4 md:w-1/2 p-2">
+						{expenses && expenses.length > 0 ? (
+							<div className="lg:w-3/4 md:w-1/2 p-2">
+								<div className="flex items-end text-center w-full mb-2 h-12">
+									<h1 className="sm:text-3xl text-2xl font-medium title-font text-indigo-900">
+										Expenses
+									</h1>
+								</div>
+								<div className="bg-gray-300 rounded-lg overflow-hidden px-1 items-end justify-start relative">
+									<div className="p-1 w-full">
+										{expenses.map((expense) => (
+											<ExpenseItem key={expense._id} expense={expense} />
+										))}
+									</div>
+								</div>
+							</div>
+						) : (
 							<div className="flex items-end text-center w-full mb-2 h-12">
-								<h1 className="sm:text-3xl text-2xl font-medium title-font text-indigo-900">
-									Expenses
+								<h1 className="md:text-lg text-3xl font-medium title-font text-indigo-500">
+									You have no expenses
 								</h1>
 							</div>
-							<ExpenseItem />
-						</div>
+						)}
+
 						<div className="lg:w-1/4 md:w-1/2 p-2 bg-white flex flex-col md:ml-auto w-full">
 							<ExpenseForm />
 						</div>

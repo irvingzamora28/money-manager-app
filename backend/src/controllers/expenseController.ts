@@ -10,7 +10,7 @@ const ExpenseController = () => {
 	) => {
 		try {
 			if (req.user) {
-				const results = await Expense.find({ user: req.user.id });
+				const results = await Expense.find({ user: req.user.id }).sort({createdAt: 'desc'});
 				res.status(200).send(results);
 			} else {
 				res.status(400);
