@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ExpenseDocumentInterface, ExpenseInterface, ExpenseModelInterface } from "../interfaces/ExpenseInterface";
 
 const expenseSchema = new mongoose.Schema(
 	{
@@ -25,6 +26,10 @@ const expenseSchema = new mongoose.Schema(
 	}
 );
 
-const Expense = mongoose.model("Expense", expenseSchema);
+expenseSchema.statics.build = (attr: ExpenseInterface) => {
+	return new Expense(attr);
+};
+
+const Expense = mongoose.model<ExpenseDocumentInterface, ExpenseModelInterface>("Expense", expenseSchema);
 
 export { Expense };

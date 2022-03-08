@@ -1,120 +1,105 @@
+import { ExpenseServiceType, ControllerType } from "./../types";
 import { AuthRequest } from "./../middleware/authMiddleware";
 import { NextFunction, Request, Response } from "express";
 import { Expense } from "../models/expenseModel";
 
-const ExpenseController = () => {
-	const index = async (
-		req: AuthRequest,
-		res: Response,
-		next: NextFunction
-	) => {
+const ExpenseController = (expenseService: ExpenseServiceType): ControllerType => {
+	const index = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response> => {
 		try {
 			if (req.user) {
-				const results = await Expense.find({ user: req.user.id }).sort({createdAt: 'desc'});
-				res.status(200).send(results);
+				const results = await expenseService.all(req.user.id);
+				return res.status(200).send(results);
 			} else {
 				res.status(400);
 				throw new Error("User invalid");
 			}
-		} catch (error) {
-			next(error);
+		} catch (error: any) {
+			return res.status(500).json({ message: error.message });
 		}
 	};
 
-	const create = async (
-		req: AuthRequest,
-		res: Response,
-		next: NextFunction
-	) => {
+	const create = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response> => {
 		try {
 			if (req.user) {
 				if (!req.body.name) {
 					res.status(400);
 					throw new Error("Please add the name of the expense");
 				}
-				const result = await Expense.create({
-					name: req.body.name,
-					quantity: req.body.quantity,
-					description: req.body.description,
-					user: req.user.id,
-				});
-				res.status(200).send(result);
-			} else {
-				res.status(400);
-				throw new Error("User invalid");
-			}
-		} catch (error) {
-			next(error);
-		}
-	};
-
-	const get = async (req: Request, res: Response, next: NextFunction) => {
-		const result = await Expense.findById(req.params.id);
-		if (!result) {
-			res.status(400);
-			throw new Error("Expense not found");
-		}
-		res.status(200).send(result);
-	};
-
-	const update = async (
-		req: AuthRequest,
-		res: Response,
-		next: NextFunction
-	) => {
-		try {
-			if (req.user) {
-				const result = await Expense.findById(req.params.id);
-				if (!result) {
-					res.status(400);
-					throw new Error("Expense not found");
-				}
-				// TODO: Find a way to check for expense ownership in middleware or extract function
-				if (result.user.toString() !== req.user.id) {
-					res.status(400);
-					throw new Error("User invalid");
-				}
-
-				const updated = await Expense.findByIdAndUpdate(
-					req.params.id,
-					req.body,
-					{ new: true }
+				const result = await expenseService.insert(
+					req.body.name,
+					req.body.quantity,
+					req.body.description,
+					req.user.id
 				);
-				res.status(200).send(updated);
+				return res.status(200).send(result);
 			} else {
 				res.status(400);
 				throw new Error("User invalid");
 			}
-		} catch (error) {
-			next(error);
+		} catch (error: any) {
+			return res.status(500).json({ message: error.message });
 		}
 	};
 
-	const destroy = async (
-		req: AuthRequest,
-		res: Response,
-		next: NextFunction
-	) => {
+	const get = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+		try {
+			const result = await expenseService.get(req.params.id);
+			if (!result) {
+				res.status(400);
+				throw new Error("Expense not found");
+			}
+			return res.status(200).send(result);
+		} catch (error: any) {
+			return res.status(500).json({ message: error.message });
+		}
+	};
+
+	const update = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response> => {
 		try {
 			if (req.user) {
 				const result = await Expense.findById(req.params.id);
 				if (!result) {
 					res.status(400);
 					throw new Error("Expense not found");
-				}	
+				}
 				// TODO: Find a way to check for expense ownership in middleware or extract function
 				if (result.user.toString() !== req.user.id) {
 					res.status(400);
 					throw new Error("User invalid");
 				}
-				const deleted = await Expense.findByIdAndDelete(req.params.id);
-				res.status(200).send(deleted);
+
+				const updated = await expenseService.update(req.params.id, req.body);
+				return res.status(200).send(updated);
 			} else {
 				res.status(400);
 				throw new Error("User invalid");
 			}
-		} catch (error) {
-			next(error);
+		} catch (error: any) {
+			return res.status(500).json({ message: error.message });
+		}
+	};
+
+	const destroy = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response> => {
+		try {
+			if (req.user) {
+				const result = await Expense.findById(req.params.id);
+				if (!result) {
+					res.status(400);
+					throw new Error("Expense not found");
+				}
+				// TODO: Find a way to check for expense ownership in middleware or extract function
+				if (result.user.toString() !== req.user.id) {
+					res.status(400);
+					throw new Error("User invalid");
+				}
+				const deleted = await expenseService.destroy(req.params.id);
+				return res.status(200).send(deleted);
+			} else {
+				res.status(400);
+				throw new Error("User invalid");
+			}
+		} catch (error: any) {
+			return res.status(500).json({ message: error.message });
 		}
 	};
 
