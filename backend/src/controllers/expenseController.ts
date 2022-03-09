@@ -21,10 +21,6 @@ const ExpenseController = (expenseService: ExpenseServiceType): ControllerType =
 	const create = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response> => {
 		try {
 			if (req.user) {
-				if (!req.body.name) {
-					res.status(400);
-					throw new Error("Please add the name of the expense");
-				}
 				const result = await expenseService.insert(
 					req.body.name,
 					req.body.quantity,
