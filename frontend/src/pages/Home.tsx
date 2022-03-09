@@ -12,18 +12,19 @@ const Home = () => {
 	const dispatch = useDispatch();
 
 	const { user } = useSelector((state: RootState) => state.auth);
-	const { expenses, isLoading } = useSelector((state: RootState) => state.expenses);
+	const { expenses, isLoading, isSuccess, success } = useSelector((state: RootState) => state.expenses);
 
 	useEffect(() => {
 		if (!user) {
 			navigate("/login");
 		}
 
+		// TODO: Fetch expenses only on first load, do not fetch all expenses when creating a new one or deleting one
 		dispatch(getExpenses(null));
 		return () => {
 			dispatch(reset());
 		};
-	}, [user, dispatch, navigate]);
+	}, [user, isSuccess, success, dispatch, navigate]);
 
 	// TODO: Extract into component
 	if (isLoading) {

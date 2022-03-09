@@ -20,8 +20,8 @@ const createExpense = async (expenseData: any, token: string): Promise<ExpenseIn
 		});
 
 		const expense = await response.json();
-		if (expense.name) {
-			return expense;
+		if (expense.expenses) {
+			return expense.expenses[0];
 		} else {
 			throw new Error(expense.message);
 		}
@@ -47,8 +47,8 @@ const getExpenses = async (token: string): Promise<ExpenseInterface[]> => {
 
 		const expenses = await response.json();
 
-		if (expenses) {
-			return expenses;
+		if (expenses.expenses) {
+			return expenses.expenses;
 		} else {
 			throw new Error(expenses.message);
 		}
