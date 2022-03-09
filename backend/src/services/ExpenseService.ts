@@ -1,10 +1,10 @@
 import { ExpenseServiceType, ExpenseServiceResponse } from "./../types";
-import { Expense } from "../models/expenseModel";
+import { ExpenseModelInterface } from "../interfaces/ExpenseInterface";
 
-const ExpenseService = (expense: typeof Expense): ExpenseServiceType => {
+const ExpenseService = (expense: ExpenseModelInterface): ExpenseServiceType => {
 	const all = async (userId: string): Promise<ExpenseServiceResponse> => {
 		try {
-			const result = await Expense.find({ user: userId }).sort({ createdAt: "desc" });
+			const result = await expense.find({ user: userId }).sort({ createdAt: "desc" });
 			return { expenses: result };
 		} catch (error: any) {
 			return { error: { errorCode: 99, message: error.message } };
@@ -12,7 +12,7 @@ const ExpenseService = (expense: typeof Expense): ExpenseServiceType => {
 	};
 	const get = async (id: string): Promise<ExpenseServiceResponse> => {
 		try {
-			const result = await Expense.findById(id);
+			const result = await expense.findById(id);
 			if (!result) {
 				return { error: { errorCode: 99, message: "Expense not found" } };
 			}
