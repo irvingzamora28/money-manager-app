@@ -1,15 +1,17 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { FaPlus } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { RootState } from "../app/store";
 import ExpenseForm from "../components/ExpenseForm";
+import ExpenseFormModal from "../components/ExpenseFormModal";
 import ExpenseItem from "../components/ExpenseItem";
 import { getExpenses, reset } from "../features/expenses/expenseSlice";
 const Home = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const [expenseFormModalOpen, setExpenseFormModalOpen] = useState(false);
 
 	const { user } = useSelector((state: RootState) => state.auth);
 	const { expenses, isLoading, isSuccess, success } = useSelector((state: RootState) => state.expenses);
@@ -67,12 +69,24 @@ const Home = () => {
 							</div>
 						)}
 
-						<div className="lg:w-1/4 md:w-1/2 p-2 bg-white flex flex-col md:ml-auto w-full">
+						<div className="lg:w-1/4 md:w-1/2 p-2 bg-white flex-col md:ml-auto w-full md:block hidden">
 							<ExpenseForm />
 						</div>
 					</div>
 				</div>
+				<div className="flex fixed bottom-10 right-10 md:hidden">
+					<button
+						type="button"
+						onClick={() => {
+							setExpenseFormModalOpen(true);
+						}}
+						className="inline-block rounded-full bg-blue-600 text-white leading-normal uppercase shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-12 h-12"
+					>
+						<FaPlus className="w-3 mx-auto" />
+					</button>
+				</div>
 			</section>
+			{expenseFormModalOpen && <ExpenseFormModal setExpenseFormModalOpen={setExpenseFormModalOpen} />}
 		</div>
 	);
 };
