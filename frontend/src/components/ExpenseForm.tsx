@@ -5,7 +5,12 @@ import { toast } from "react-toastify";
 import { RootState } from "../app/store";
 import { createExpense } from "../features/expenses/expenseSlice";
 
-const ExpenseForm = () => {
+type Props = {
+    setExpenseFormModalOpen?: React.Dispatch<React.SetStateAction<any>>;
+};
+
+
+const ExpenseForm: React.FC<Props> = ({setExpenseFormModalOpen}) => {
 	const dispatch = useDispatch();
 
 	const [expenseData, setExpenseData] = useState({
@@ -38,6 +43,9 @@ const ExpenseForm = () => {
 	const onSubmit = (event: React.FormEvent<EventTarget>) => {
 		event.preventDefault();
 		dispatch(createExpense(expenseData))
+        if (setExpenseFormModalOpen) {
+			setExpenseFormModalOpen(false)
+		}
 
 	};
 
