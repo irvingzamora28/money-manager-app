@@ -4,6 +4,7 @@ import { TailSpin } from "react-loader-spinner";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../app/store";
+import DeleteExpenseModal from "../components/DeleteExpenseModal";
 import ExpenseForm from "../components/ExpenseForm";
 import ExpenseFormModal from "../components/ExpenseFormModal";
 import ExpenseItem from "../components/ExpenseItem";
@@ -12,6 +13,7 @@ const Home = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const [expenseFormModalOpen, setExpenseFormModalOpen] = useState(false);
+	const [deleteExpenseFormModalOpen, setDeleteExpenseFormModalOpen] = useState(false);
 
 	const { user } = useSelector((state: RootState) => state.auth);
 	const { expenses, isLoading, isSuccess, success } = useSelector((state: RootState) => state.expenses);
@@ -87,6 +89,9 @@ const Home = () => {
 				</div>
 			</section>
 			{expenseFormModalOpen && <ExpenseFormModal setExpenseFormModalOpen={setExpenseFormModalOpen} />}
+
+			<DeleteExpenseModal setDeleteExpenseFormModalOpen={setDeleteExpenseFormModalOpen} />
+
 		</div>
 	);
 };
