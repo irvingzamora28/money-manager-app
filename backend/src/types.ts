@@ -1,5 +1,6 @@
 import { NextFunction, Response } from "express";
 import { ExpenseInterface } from "./interfaces/ExpenseInterface";
+import { UserInterface } from "./interfaces/UserInterface";
 import { AuthRequest } from "./middleware/authMiddleware";
 
 export type DatabaseErrorType = { errorCode: number; message: string };
@@ -20,4 +21,10 @@ export type ExpenseServiceType = {
 	insert: (name: string, price: number, description: string, user: string) => Promise<ExpenseServiceResponse>;
 	update: (id: string, data: object) => Promise<ExpenseServiceResponse>;
 	destroy: (id: string) => Promise<ExpenseServiceResponse>;
+};
+
+export type UserServiceResponse = { user?: UserInterface; error?: ErrorType };
+export type UserServiceType = {
+	register: (name: string, email: string, password: string) => Promise<UserServiceResponse>;
+	login: (email: string, password: string) => Promise<UserServiceResponse>;
 };

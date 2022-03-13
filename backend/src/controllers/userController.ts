@@ -1,9 +1,6 @@
 import { AuthRequest } from "./../middleware/authMiddleware";
 import { NextFunction, Request, Response } from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { User } from "../models/userModel";
-import UsernameGenerator from "../utils/usernameGenerator";
 
 const UserController = () => {
 	const index = async (req: Request, res: Response, next: NextFunction) => {};
