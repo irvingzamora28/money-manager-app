@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import { Document } from "mongoose";
 
 interface UserInterface {
+	id?: string;
+	_id?: string;
 	name: string;
 	username: string;
 	email: string;

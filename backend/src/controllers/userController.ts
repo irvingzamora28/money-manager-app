@@ -1,123 +1,82 @@
-import { AuthRequest } from "./../middleware/authMiddleware";
-import { NextFunction, Request, Response } from "express";
-import { User } from "../models/userModel";
+import { AuthRequest } from './../middleware/authMiddleware';
+import { NextFunction, Request, Response } from 'express';
+import { AuthenticationControllerType, UserServiceType } from '../types';
+import jwt from 'jsonwebtoken';
 
-const UserController = () => {
-	const index = async (req: Request, res: Response, next: NextFunction) => {};
-
-	const create = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	) => {};
-
-	const get = async (req: AuthRequest, res: Response, next: NextFunction) => {
+const UserController = (userService: UserServiceType): AuthenticationControllerType => {
+	const get = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response> => {
 		try {
 			if (req.user) {
-				res.status(200).send(req.user)
+				return res.status(200).send(req.user);
 			} else {
 				res.status(400);
-				throw new Error("User invalid");
+				throw new Error('User invalid');
 			}
-		} catch (error) {
-			next(error)	
+		} catch (error: any) {
+			return res.status(500).json({ message: error.message });
 		}
 	};
 
-	const update = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	) => {};
-
-	const destroy = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	) => {};
-
-	const register = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	) => {
+	const register = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
 		try {
 			const { name, email, password } = req.body;
 			if (!name || !email || !password) {
 				res.status(400);
-				throw new Error("Please add all necessary fields");
+				throw new Error('Please add all necessary fields');
 			}
-			const userExists = await User.findOne({ email });
-			if (userExists) {
-				res.status(400);
-				throw new Error("User already exists");
-			}
-			// Hash password
-			const salt = await bcrypt.genSalt(10);
-			const hashedPassword = await bcrypt.hash(password, salt);
-			const username = UsernameGenerator().generate();
+			const result = await userService.register(name, email, password);
 
-			const user = await User.create({
-				name,
-				email,
-				password: hashedPassword,
-				username,
-			});
-
-			if (user) {
-				res.status(201).send({
-					_id: user.id,
-					name: user.name,
-					username: user.username,
-					token: generateToken(user._id),
+			// TODO: Verify a better way to generate token with user id
+			if (result.user) {
+				return res.status(201).send({
+					_id: result.user.id,
+					name: result.user.name,
+					username: result.user.username,
+					token: generateToken(result.user._id ?? "")
 				});
 			} else {
 				res.status(400);
-				throw new Error("Invalid user data");
+				throw new Error('Invalid user data');
 			}
-		} catch (error) {
-			next(error);
+		} catch (error: any) {
+			return res.status(500).json({ message: error.message });
 		}
 	};
 
-	const login = async (req: Request, res: Response, next: NextFunction) => {
+	const login = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
 		try {
 			const { email, password } = req.body;
 			if (!email || !password) {
 				res.status(400);
-				throw new Error("Please add all necessary fields");
+				throw new Error('Please add all necessary fields');
 			}
 
-			const user = await User.findOne({ email });
-			if (user && (await bcrypt.compare(password, user.password))) {
-				res.status(201).send({
-					_id: user.id,
-					name: user.name,
-					username: user.username,
-					token: generateToken(user._id),
+			const result = await userService.login(email, password);
+			if (result.user) {
+				return res.status(201).send({
+					_id: result.user.id,
+					name: result.user.name,
+					username: result.user.username,
+					token: generateToken(result.user._id ?? "")
 				});
 			} else {
 				res.status(400);
-				throw new Error("Invalid user data");
+				throw new Error('Invalid user data');
 			}
-		} catch (error) {
-			next(error);
+		} catch (error: any) {
+			return res.status(500).json({ message: error.message });
 		}
 	};
 
 	const generateToken = (id: string) => {
 		const secret = process.env.JWT_SECRET ?? "";
-		return jwt.sign({ id }, secret, { expiresIn: "30d" });
+		return jwt.sign({ id }, secret, { expiresIn: '30d' });
 	};
 
 	return {
-		index,
-		create,
 		get,
-		update,
-		destroy,
 		register,
-		login,
+		login
 	};
 };
 

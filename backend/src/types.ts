@@ -14,6 +14,12 @@ export type ControllerType = {
 	destroy: (req: AuthRequest, res: Response, next: NextFunction) => Promise<Response>;
 };
 
+export type AuthenticationControllerType = {
+	register: (req: AuthRequest, res: Response, next: NextFunction) => Promise<Response>;
+	login: (req: AuthRequest, res: Response, next: NextFunction) => Promise<Response>;
+	get: (req: AuthRequest, res: Response, next: NextFunction) => Promise<Response>;
+}
+
 export type ExpenseServiceResponse = { expenses?: ExpenseInterface[]; error?: ErrorType };
 export type ExpenseServiceType = {
 	all: (userId: string) => Promise<ExpenseServiceResponse>;

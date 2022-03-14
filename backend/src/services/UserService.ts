@@ -2,7 +2,6 @@ import { UserModelInterface } from '../interfaces/UserInterface';
 import { UserServiceResponse, UserServiceType } from '../types';
 import UsernameGenerator from '../utils/usernameGenerator';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
 const UserService = (user: UserModelInterface): UserServiceType => {
 	const register = async (name: string, email: string, password: string): Promise<UserServiceResponse> => {
@@ -36,11 +35,6 @@ const UserService = (user: UserModelInterface): UserServiceType => {
 		} else {
 			return { error: { errorCode: 99, message: 'Login not allowed' } };
 		}
-	};
-
-	const generateToken = (id: string) => {
-		const secret = process.env.JWT_SECRET ?? "";
-		return jwt.sign({ id }, secret, { expiresIn: "30d" });
 	};
 
 	return {

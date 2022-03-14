@@ -1,8 +1,12 @@
 import express from "express";
 import UserController from "../controllers/userController";
 import { protect } from "../middleware/authMiddleware";
+import { User } from "../models/userModel";
+import UserService from "../services/UserService";
 
-const userController = UserController()
+const user = User
+const userService = UserService(user)
+const userController = UserController(userService)
 const router = express.Router();
 
 

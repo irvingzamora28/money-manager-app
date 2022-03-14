@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import UserInterface from "../interfaces/UserInterface";
+import {UserDocumentInterface, UserInterface, UserModelInterface} from "../interfaces/UserInterface";
 
 const userSchema = new mongoose.Schema(
 	{
@@ -27,6 +27,11 @@ const userSchema = new mongoose.Schema(
 	}
 );
 
-const User = mongoose.model<UserInterface>("User", userSchema);
+userSchema.statics.build = (attr: UserInterface) => {
+	return new User(attr);
+};
+
+
+const User = mongoose.model<UserDocumentInterface, UserModelInterface>("User", userSchema);
 
 export { User };
