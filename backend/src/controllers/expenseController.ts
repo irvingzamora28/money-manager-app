@@ -6,7 +6,7 @@ import { Expense } from "../models/expenseModel";
 const ExpenseController = (expenseService: ExpenseServiceType): ControllerType => {
 	const index = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response> => {
 		try {
-			if (req.user) {
+			if (req.user && req.user.id) {
 				const results = await expenseService.all(req.user.id);
 				return res.status(200).send(results);
 			} else {
@@ -20,7 +20,7 @@ const ExpenseController = (expenseService: ExpenseServiceType): ControllerType =
 
 	const create = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response> => {
 		try {
-			if (req.user) {
+			if (req.user && req.user.id) {
 				const result = await expenseService.insert(
 					req.body.name,
 					req.body.quantity,
