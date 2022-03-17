@@ -20,10 +20,6 @@ const UserController = (userService: UserServiceType): AuthenticationControllerT
 	const register = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
 		try {
 			const { name, email, password } = req.body;
-			if (!name || !email || !password) {
-				res.status(400);
-				throw new Error('Please add all necessary fields');
-			}
 			const result = await userService.register(name, email, password);
 
 			// TODO: Verify a better way to generate token with user id
@@ -46,10 +42,6 @@ const UserController = (userService: UserServiceType): AuthenticationControllerT
 	const login = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
 		try {
 			const { email, password } = req.body;
-			if (!email || !password) {
-				res.status(400);
-				throw new Error('Please add all necessary fields');
-			}
 
 			const result = await userService.login(email, password);
 			if (result.user) {
