@@ -32,7 +32,7 @@ const UserController = (userService: UserServiceType): AuthenticationControllerT
 				});
 			} else {
 				res.status(400);
-				throw new Error('Invalid user data');
+				throw new Error(result.error?.message);
 			}
 		} catch (error: any) {
 			return res.status(500).json({ message: error.message });
@@ -53,7 +53,7 @@ const UserController = (userService: UserServiceType): AuthenticationControllerT
 				});
 			} else {
 				res.status(400);
-				throw new Error('Invalid user data');
+				throw new Error(result.error?.message);
 			}
 		} catch (error: any) {
 			return res.status(500).json({ message: error.message });
