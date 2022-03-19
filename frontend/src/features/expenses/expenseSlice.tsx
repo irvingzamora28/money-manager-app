@@ -42,10 +42,12 @@ const getExpenses = createAsyncThunk<
 	}
 >("expenses/all", async (_, thunkAPI) => {
 	try {
-		const token = thunkAPI.getState().auth.user?.token ?? "";
-
-		const result = await expenseService.getExpenses(token);
-		return result;
+		const token = thunkAPI.getState().auth.user?.token;
+		if (token) {
+			const result = await expenseService.getExpenses(token);
+			return result;
+		}
+		return [];
 	} catch (error: any) {
 		const message =
 			(error.response && error.response.data && error.response.data.message) || error.message || error.toString();

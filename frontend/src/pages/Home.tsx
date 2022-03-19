@@ -90,7 +90,7 @@ const Home = () => {
 			</section>
 			{expenseFormModalOpen && <ExpenseFormModal setExpenseFormModalOpen={setExpenseFormModalOpen} />}
 
-			<DeleteExpenseModal setDeleteExpenseFormModalOpen={setDeleteExpenseFormModalOpen} />
+			{/* <DeleteExpenseModal setDeleteExpenseFormModalOpen={setDeleteExpenseFormModalOpen} /> */}
 
 		</div>
 	);

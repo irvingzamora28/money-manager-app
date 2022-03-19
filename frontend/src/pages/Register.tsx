@@ -27,7 +27,7 @@ const Register = () => {
 			navigate("/");
 		}
 
-		dispatch(reset());
+		// dispatch(reset());
 	}, [user, isError, isSuccess, error, success, navigate, dispatch]);
 
 	const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
