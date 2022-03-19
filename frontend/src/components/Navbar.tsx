@@ -63,9 +63,11 @@ const Navbar = () => {
 							}`}
 						>
 							<div className="flex flex-col mt-2 md:flex-row md:mt-0 md:mx-1 w-100">
-								<button className="my-1 text-sm leading-5 text-gray-700 transition-colors duration-200 transform dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:underline md:mx-4 md:my-0">
+								<Link 
+									to="/categories"
+									className="my-1 text-sm leading-5 text-gray-700 transition-colors duration-200 transform dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:underline md:mx-4 md:my-0">
 									Categories
-								</button>
+								</Link>
 							</div>
 							<div className="flex place-content-end py-2 -mx-1 md:mx-0 w-100 self-end">
 								{user ? (
