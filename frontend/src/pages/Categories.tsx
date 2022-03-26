@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import CategoryFormModal from '../components/CategoryFormModal';
 
 const Categories = () => {
 
@@ -65,7 +66,7 @@ const Categories = () => {
 
     return (
         <div>
-
+            <CategoryFormModal />
             <div className="sm:px-6 w-full">
                 <div className="px-4 md:px-10 py-0 md:pt-4">
                     <div className="flex items-center justify-between">
