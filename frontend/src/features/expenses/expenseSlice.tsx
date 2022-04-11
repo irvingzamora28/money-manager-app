@@ -85,76 +85,58 @@ const expenseSlice = createSlice({
 			.addCase(createExpense.pending, (state: ExpenseStateInterface) => {
 				state.isLoading = true;
 			})
-			.addCase(
-				createExpense.fulfilled,
-				(state: ExpenseStateInterface, action: PayloadAction<ExpenseInterface>) => {
-					state.isLoading = false;
-					state.expenses?.push(action.payload);
-					state.isSuccess = true;
-					state.success.type = "create_expense";
-					state.success.message = "Expense created successfully";
+			.addCase(createExpense.fulfilled, (state: ExpenseStateInterface, action: PayloadAction<ExpenseInterface>) => {
+				state.isLoading = false;
+				state.expenses?.push(action.payload);
+				state.isSuccess = true;
+				state.success.type = "create_expense";
+				state.success.message = "Expense created successfully";
+			})
+			.addCase(createExpense.rejected, (state: ExpenseStateInterface, action: PayloadAction<ErrorResponseInterface | undefined>) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.expenses = null;
+				if (action.payload) {
+					state.error.type = "create_expense";
+					state.error.message = action.payload.message;
 				}
-			)
-			.addCase(
-				createExpense.rejected,
-				(state: ExpenseStateInterface, action: PayloadAction<ErrorResponseInterface | undefined>) => {
-					state.isLoading = false;
-					state.isError = true;
-					state.expenses = null;
-					if (action.payload) {
-						state.error.type = "create_expense";
-						state.error.message = action.payload.message;
-					}
-				}
-			)
+			})
 			.addCase(getExpenses.pending, (state: ExpenseStateInterface) => {
 				state.isLoading = true;
 			})
-			.addCase(
-				getExpenses.fulfilled,
-				(state: ExpenseStateInterface, action: PayloadAction<ExpenseInterface[]>) => {
-					state.isLoading = false;
-					state.expenses = action.payload;
+			.addCase(getExpenses.fulfilled, (state: ExpenseStateInterface, action: PayloadAction<ExpenseInterface[]>) => {
+				state.isLoading = false;
+				state.expenses = action.payload;
+			})
+			.addCase(getExpenses.rejected, (state: ExpenseStateInterface, action: PayloadAction<ErrorResponseInterface | undefined>) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.expenses = null;
+				if (action.payload) {
+					state.error.type = "get_expenses";
+					state.error.message = action.payload.message;
 				}
-			)
-			.addCase(
-				getExpenses.rejected,
-				(state: ExpenseStateInterface, action: PayloadAction<ErrorResponseInterface | undefined>) => {
-					state.isLoading = false;
-					state.isError = true;
-					state.expenses = null;
-					if (action.payload) {
-						state.error.type = "get_expenses";
-						state.error.message = action.payload.message;
-					}
-				}
-			)
+			})
 			.addCase(deleteExpense.pending, (state: ExpenseStateInterface) => {
 				state.isLoading = true;
 			})
-			.addCase(
-				deleteExpense.fulfilled,
-				(state: ExpenseStateInterface, action: PayloadAction<ExpenseInterface>) => {
-					state.isLoading = false;
-					state.isSuccess = true;
-					state.success.message = "Expense deleted successfully";
-					if (state.expenses) {
-						state.expenses = state.expenses.filter((expense) => expense._id !== action.payload._id);
-					}
+			.addCase(deleteExpense.fulfilled, (state: ExpenseStateInterface, action: PayloadAction<ExpenseInterface>) => {
+				state.isLoading = false;
+				state.isSuccess = true;
+				state.success.message = "Expense deleted successfully";
+				if (state.expenses) {
+					state.expenses = state.expenses.filter((expense) => expense._id !== action.payload._id);
 				}
-			)
-			.addCase(
-				deleteExpense.rejected,
-				(state: ExpenseStateInterface, action: PayloadAction<ErrorResponseInterface | undefined>) => {
-					state.isLoading = false;
-					state.isError = true;
-					state.expenses = null;
-					if (action.payload) {
-						state.error.type = "get_expenses";
-						state.error.message = action.payload.message;
-					}
+			})
+			.addCase(deleteExpense.rejected, (state: ExpenseStateInterface, action: PayloadAction<ErrorResponseInterface | undefined>) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.expenses = null;
+				if (action.payload) {
+					state.error.type = "get_expenses";
+					state.error.message = action.payload.message;
 				}
-			);
+			});
 	},
 });
 
