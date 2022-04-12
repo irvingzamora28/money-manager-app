@@ -14,8 +14,6 @@ null,
 	rejectValue: ErrorResponseInterface;
 }
 >("categories/all", async (_, thunkAPI) => {
-	const API_URL = `${config.server.host}:${config.server.port}/api/categories`;
-	// const state = thunkAPI.getState().auth
 	const token = thunkAPI.getState().auth.user?.token ?? "";
 	if (token) {
 		const result = await categoryService.getCategories(token)
