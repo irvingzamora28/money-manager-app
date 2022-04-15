@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { RootState } from "../app/store";
 import CategoryFormModal from "../components/CategoryFormModal";
 import CategoryItem from "../components/CategoryItem";
@@ -7,15 +8,26 @@ import { getCategories } from "../features/categories/categorySlice";
 
 const Categories = () => {
     const dispatch = useDispatch();
-    const { categories, isLoading, isSuccess, success } = useSelector((state: RootState) => state.categories);
-    console.log("categories");
-    console.log(categories);
-
+    const { categories, error, isError } = useSelector((state: RootState) => state.categories);
+    
     useEffect(() => {
         dispatch(getCategories(null));
+      return () => {
+        
+      }
+    }, [dispatch])
+    
+    
+    useEffect(() => {
+        
+        if (isError) {
+            toast.error(error.message)
+        }
 
-        return () => { };
-    }, [dispatch]);
+        return () => {
+         };
+    }, [error, isError]);
+
 
     const popuphandler = (event: React.MouseEvent<HTMLButtonElement>) => {
         let element = event.currentTarget;
@@ -62,6 +74,7 @@ const Categories = () => {
                 </div>
                 <div className="bg-white py-0 md:pt-4 px-4 md:px-8 xl:px-10">
                     <div className="mt-7 overflow-x-visible">
+                        {isError ? "Error getting the categories. Please try again later" : 
                         <table className="w-full whitespace-nowrap">
                             <tbody>
                                 {categories.map((category) => (
@@ -69,6 +82,7 @@ const Categories = () => {
                                 ))}
                             </tbody>
                         </table>
+                        }
                     </div>
                 </div>
             </div>
